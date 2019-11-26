@@ -1,7 +1,8 @@
 #include "../inc/Grammar.h"
+#include "../inc/LL1Parser.h"
 #include <iostream>
+#include <fstream>
 #include <ctype.h>
-#include <memory.h>
 #include <iterator>
 
 Grammar::Grammar(string filename) {
@@ -10,6 +11,7 @@ Grammar::Grammar(string filename) {
 		cerr << "Error opening " << filename << endl;
 		exit(1);
 	}
+
 	string templine;
 	while (getline(file, templine)) {
 		templine.erase(0, templine.find_first_not_of(" "));
@@ -92,25 +94,113 @@ char Grammar::findNew(char old) {
 }
 
 void Grammar::constructFirst() {
+	map<char, set<char>> last = first;
 	for (const auto & _production: production) {
 		for (const auto & expression : _production.right) {
 			if (terminal.find(expression[0]) != terminal.end()) 
 				first[_production.left].insert(expression[0]);
-			else {  //the first character is nonterminal
-				
+			else {  //the first character is a nonterminal
+				for (auto ch : expression) {
+					if (nonterminal.find(ch) != nonterminal.end()) {
+						for (const auto c : first[ch])
+							if (c != '#')
+								first[_production.left].insert(c);
+						if (first[ch].find('#') == first[ch].end())
+							break;
+					}
+					else if (terminal.find(ch) != terminal.end()) {
+						first[_production.left].insert(ch);
+						break;
+					}
+					else
+						break;
+				}
 			}
 		}
 	}
+	if (last != first)
+		constructFirst();
 }
 
-void Grammar::constructFollow()
-{
+bool operator != (map<char, set<char>>& first, map<char, set<char>>& second) {
+	for (const auto ch : first)
+		if (first[ch.first].size() != second[ch.first].size())
+			return true;
+	return false;
+}
 
+void Grammar::constructFollow() {
+	map<char, set<char>> last = follow;
+	follow[begin].insert('$');
+	for (const auto& _production : production) {
+		for (const auto& expression : _production.right) {
+			size_t size = expression.size();
+			for (int i = 0; i < size; i++) {
+				if (nonterminal.find(expression[i]) != nonterminal.end()) {
+					if (i == size - 1 || (nonterminal.find(expression[i + 1]) != nonterminal.end()
+						&& first[expression[i + 1]].find('#') != first[expression[i + 1]].end()))
+						for (const auto ch : follow[_production.left])
+							follow[expression[i]].insert(ch);
+					if (terminal.find(expression[i + 1]) != terminal.end())
+						follow[expression[i]].insert(expression[i + 1]);
+					else {
+						for (const auto ch : first[expression[i + 1]])
+							if (ch != '#')
+								follow[expression[i]].insert(ch);
+					}
+				}
+			}
+		}
+	}
+	if (last != follow)
+		constructFollow();
 }
 
 int main() {
 	string path = "grammar.txt";
-	Grammar grammar(path);	
-	grammar.deleteLeftRecursion();
+	Grammar * grammar = new Grammar(path);	
+	grammar->deleteLeftRecursion();
+	grammar->constructFirst();
+	grammar->constructFollow();
+	LL1Parser LL1(grammar);
+	LL1.constructTable();
+	LL1.parse("6 - (2 + (8 * 9) / 6)");/*
+	for(auto i: table.grammar->nonterminal)
+		for (auto j : table.grammar->terminal)
+		{
+			if (table.parsingtable[make_pair(i, j)].left != -1) {
+				cout << "M[" << i << "," << j << "]=" << table.parsingtable[make_pair(i, j)].left;
+				cout << "->" << table.parsingtable[make_pair(i, j)].right[0] << endl;
+			}
+		}
+	for (auto i : table.grammar->nonterminal)
+	{
+		char j = '$';
+		if (table.parsingtable[make_pair(i, j)].left != -1) {
+			cout << "M[" << i << "," << j << "]=" << table.parsingtable[make_pair(i, j)].left;
+			cout << "->" << table.parsingtable[make_pair(i, j)].right[0] << endl;
+		}
+	}*/
+	/*
+	for (auto i: grammar.production)
+	{
+		cout << i.left << "->";
+		for (auto j : i.right)
+			cout << j << "   ";
+		cout << endl;
+	}
+	for (auto c : grammar.first) {
+		cout << c.first << ":";
+		for (auto b : c.second)
+			cout << b << " ";
+		cout << endl;
+	}
+	cout << endl << endl;
+	for (auto c : grammar.follow) {
+		cout << c.first << ":";
+		for (auto b : c.second)
+			cout << b << " ";
+		cout << endl;
+	}*/
 
 }

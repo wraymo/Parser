@@ -124,9 +124,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="inc\Grammar.h" />
+    <ClInclude Include="inc\LL1Parser.h" />
+    <ClInclude Include="inc\LL1ParsingTable.h" />
+    <ClInclude Include="inc\LR1Parser.h" />
+    <ClInclude Include="inc\LR1ParsingTable.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Grammar.cpp" />
+    <ClCompile Include="src\LL1Parser.cpp" />
+    <ClCompile Include="src\LL1ParsingTable.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -18,9 +18,27 @@
     <ClInclude Include="inc\Grammar.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="inc\LL1Parser.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\LR1Parser.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\LL1ParsingTable.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\LR1ParsingTable.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Grammar.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\LL1ParsingTable.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\LL1Parser.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
