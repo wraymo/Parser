@@ -3,6 +3,6 @@
 #include "LR1ParsingTable.h"
 
 class LR1Parser {
-	Grammar* grammar;
-	LR1ParsingTable table;
+    Grammar* grammar;
+    LR1ParsingTable table;
 };

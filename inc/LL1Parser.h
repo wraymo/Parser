@@ -5,24 +5,24 @@
 
 class LL1Parser {
 public:
-	LL1ParsingTable table;
-	Grammar* grammar;
-	stack<char> S;
+    LL1ParsingTable table;
+    Grammar* grammar;
+    stack<char> S;
 
-	LL1Parser(Grammar* _grammar): grammar(_grammar), table(_grammar), debug(true){}
-	void parse(string);
+    LL1Parser(Grammar* _grammar): grammar(_grammar), table(_grammar), debug(true){}
+    void parse(string);
 
-	void closedebug() {
-		debug = false;
-	}
+    void closedebug() {
+        debug = false;
+    }
 
-	void opendebug() {
-		debug = true;
-	}
+    void opendebug() {
+        debug = true;
+    }
 
-	void constructTable() {
-		table.constructTable();
-	}
+    void constructTable() {
+        table.constructTable();
+    }
 private:
-	bool debug;
+    bool debug;
 };
