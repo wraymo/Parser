@@ -21,8 +21,8 @@ void LL1Parser::parse(string expression) {
             index = 0;
             second = expression[i];
         }
-
-        if (grammar->terminal.find(S.top()) != grammar->terminal.end()) {
+        
+        if (grammar->isTerminal(S.top())) {
             if (S.top() == second) {
                 S.pop();
                 if (index == 0)
@@ -35,14 +35,15 @@ void LL1Parser::parse(string expression) {
                 return;
             }
         }
-        else if (table.parsingtable[make_pair(S.top(), second)].size() > 1) {
+
+        else if (table.parsingtable[{S.top(), second}].size() > 0) {
             char top = S.top();
             S.pop();
-            for (int i = table.parsingtable[make_pair(top, second)][0].size() - 1; i >= 0; i--)
-                if(table.parsingtable[make_pair(top, second)][0][i] != '#')
-                    S.push(table.parsingtable[make_pair(top, second)][0][i]);
+            for (int i = table.parsingtable[{top, second}][0].size() - 1; i >= 0; i--)
+                if (table.parsingtable[{top, second}][0][i] != '#')
+                    S.push(table.parsingtable[{top, second}][0][i]);
             if (debug)
-                cout << top << "->" << table.parsingtable[make_pair(top, second)][0] << endl;
+                cout << top << "->" << table.parsingtable[{top, second}][0] << endl;
         }
         else {
             cerr << "Wrong expression(type: 2)!" << endl;
@@ -50,5 +51,7 @@ void LL1Parser::parse(string expression) {
         }
     }
     if (S.top() == '$' && expression[i] == '$')
-        cout << "Right Expression!" << endl;
+        cerr << "Right Expression!" << endl;
+    else
+        cerr << "Wrong expression(type: 3)!" << endl;
 }

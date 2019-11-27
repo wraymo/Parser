@@ -5,7 +5,7 @@
 #include <ctype.h>
 #include <iterator>
 
-Grammar::Grammar(string filename) {
+Grammar::Grammar(string filename): begin(-1){
     ifstream file(filename, ios::in);
     if (!file)
         throw "Error Opening" + filename;
@@ -20,28 +20,28 @@ Grammar::Grammar(string filename) {
         size_t findbar;
         string expression;
         vector<string> templist;
-        templine = templine.substr(findarrow + 2);
+        templine.erase(0, findarrow + 2);
         while ((findbar = templine.find("|")) != string::npos) {
             expression = templine.substr(0, findbar);
             expression.erase(0, expression.find_first_not_of(" "));
             expression.erase(expression.find_last_not_of(" ") + 1);
             addSymbol(expression);
             templist.push_back(expression);
-            templine = templine.substr(findbar + 1);
+            templine.erase(0, findbar + 1);
         }
         templine.erase(0, templine.find_first_not_of(" "));
         templine.erase(templine.find_last_not_of(" ") + 1);
         addSymbol(templine);
         templist.push_back(templine);
-        production[start] = vector<string>(templist);
+        production[start].insert(production[start].end(), templist.begin(), templist.end());
         if (i == 0)
             begin = start;
         i++;
     }
 
-    for (const auto& i : nonterminal) {
-        first[i] = set<char>();
-        follow[i] = set<char>();
+    for (const auto& a : nonterminal) {
+        first[a] = set<char>();
+        follow[a] = set<char>();
     }
 
     terminal.insert('#');
@@ -134,7 +134,7 @@ void Grammar::constructFollow() {
     for (const auto& _production : production) {
         for (const auto& expression : _production.second) {
             size_t size = expression.size();
-            for (int i = 0; i < size; i++) {
+            for (size_t i = 0; i < size; i++) {
                 if (nonterminal.find(expression[i]) != nonterminal.end()) {
                     if (i == size - 1 || (nonterminal.find(expression[i + 1]) != nonterminal.end()
                         && first[expression[i + 1]].find('#') != first[expression[i + 1]].end()))
@@ -189,51 +189,20 @@ void Grammar::printFollow() {
     }
 }
 
-int main() {
-    string path = "grammar.txt";
-    Grammar * grammar = new Grammar(path);	
-    LL1Parser LL1(grammar);
-    grammar->printFirst();
-    grammar->printFollow();
-    //grammar->printGrammar();
-    LL1.parse("6 - (2 + (8 * 9) / 6)");
-    /*
-    for(auto i: table.grammar->nonterminal)
-        for (auto j : table.grammar->terminal)
-        {
-            if (table.parsingtable[make_pair(i, j)].left != -1) {
-                cout << "M[" << i << "," << j << "]=" << table.parsingtable[make_pair(i, j)].left;
-                cout << "->" << table.parsingtable[make_pair(i, j)].right[0] << endl;
-            }
-        }
-    for (auto i : table.grammar->nonterminal)
-    {
-        char j = '$';
-        if (table.parsingtable[make_pair(i, j)].left != -1) {
-            cout << "M[" << i << "," << j << "]=" << table.parsingtable[make_pair(i, j)].left;
-            cout << "->" << table.parsingtable[make_pair(i, j)].right[0] << endl;
-        }
-    }*/
-    /*
-    for (auto i: grammar.production)
-    {
-        cout << i.left << "->";
-        for (auto j : i.right)
-            cout << j << "   ";
-        cout << endl;
+set<char> Grammar::getFirst(char a) {
+    if (nonterminal.find(a) != nonterminal.end())
+        return first[a];
+    else {
+        set<char> temp;
+        temp.insert(a);
+        return temp;
     }
-    for (auto c : grammar.first) {
-        cout << c.first << ":";
-        for (auto b : c.second)
-            cout << b << " ";
-        cout << endl;
-    }
-    cout << endl << endl;
-    for (auto c : grammar.follow) {
-        cout << c.first << ":";
-        for (auto b : c.second)
-            cout << b << " ";
-        cout << endl;
-    }*/
+}
 
+bool Grammar::isTerminal(char a) {
+    return terminal.find(a) != terminal.end();
+}
+
+bool Grammar::isNonterminal(char a) {
+    return nonterminal.find(a) != nonterminal.end();
 }

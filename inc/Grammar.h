@@ -28,6 +28,9 @@ private:
     map<char, set<char>> follow;
     char begin;
 
+    set<char> getFirst(char);
+    bool isTerminal(char);
+    bool isNonterminal(char);
     void deleteLeftRecursion();
     void addSymbol(string&);
     void constructFirst();
