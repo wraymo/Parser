@@ -133,6 +133,7 @@
     <ClCompile Include="src\Grammar.cpp" />
     <ClCompile Include="src\LL1Parser.cpp" />
     <ClCompile Include="src\LL1ParsingTable.cpp" />
+    <ClCompile Include="src\LR1ParsingTable.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -41,5 +41,8 @@
     <ClCompile Include="src\LL1Parser.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="src\LR1ParsingTable.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

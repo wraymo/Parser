@@ -9,14 +9,12 @@ void LL1Parser::parse(string expression) {
     S.push(grammar->begin);
     size_t index;
     char second;
-    string temp;
     int i = 0;
     while (S.top() != '$') {
         while (isblank(expression[i]))
             i++;
         if (isdigit(expression[i])) {
             stof(expression.substr(i), &index);
-            temp = expression.substr(0, index);
             second = 'n';
         }
         else {

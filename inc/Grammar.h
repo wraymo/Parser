@@ -18,7 +18,14 @@ public:
 //Assume that the grammar is context-free, each nonterminal is a single upper-case letter 
 //and each terminal is a single character (not upper-case letter) 
 class Grammar {
+    friend class LL1ParsingTable;
+    friend class LR1ParsingTable;
+    friend class LL1Parser;
+    friend class LR1Parser;
 public:
+    Grammar(string);
+
+private:
     vector<Production> production;
     set<char> nonterminal;
     set<char> terminal;
@@ -26,10 +33,10 @@ public:
     map<char, set<char>> follow;
     char begin;
 
-    Grammar(string);
-    void addSymbol(string &);
     void deleteLeftRecursion();
+    void addSymbol(string&);
     void constructFirst();
     void constructFollow();
+    void modifyGrammar();
     char findNew(char);
 };

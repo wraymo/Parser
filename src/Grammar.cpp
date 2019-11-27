@@ -7,10 +7,8 @@
 
 Grammar::Grammar(string filename) {
     ifstream file(filename, ios::in);
-    if (!file) {
-        cerr << "Error opening " << filename << endl;
-        exit(1);
-    }
+    if (!file)
+        throw "Error Opening" + filename;
 
     string templine;
     while (getline(file, templine)) {
@@ -156,14 +154,20 @@ void Grammar::constructFollow() {
         constructFollow();
 }
 
+void Grammar::modifyGrammar() {
+    vector<Production>::iterator it;
+    it = production.begin();
+    char newstart = findNew(begin);
+    Production newprod(newstart, vector<string>(1, string(1, begin)));
+    production.insert(it, newprod);
+    nonterminal.insert(newstart);
+    begin = newstart;
+}
+
 int main() {
     string path = "grammar.txt";
     Grammar * grammar = new Grammar(path);	
-    grammar->deleteLeftRecursion();
-    grammar->constructFirst();
-    grammar->constructFollow();
     LL1Parser LL1(grammar);
-    LL1.constructTable();
     LL1.parse("6 - (2 + (8 * 9) / 6)");/*
     for(auto i: table.grammar->nonterminal)
         for (auto j : table.grammar->terminal)
