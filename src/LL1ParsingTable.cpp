@@ -8,32 +8,27 @@ LL1ParsingTable::LL1ParsingTable(Grammar* _grammar) : grammar(_grammar) {
     for (const auto i : grammar->nonterminal)
         for (const auto j : grammar->terminal)
             if (j != '#')
-                parsingtable[make_pair(i, j)] = Production();
+                parsingtable[make_pair(i, j)] = vector<string>();
     for (const auto i : grammar->nonterminal)
-        parsingtable[make_pair(i, '$')] = Production();
+        parsingtable[make_pair(i, '$')] = vector<string>();
     constructTable();
 }
 
 void LL1ParsingTable::constructTable() {
     for (const auto& _production : grammar->production) {
-        for (const auto& expression : _production.right) {
-            if (expression[0] != '#' && grammar->terminal.find(expression[0]) != grammar->terminal.end()) {
-                parsingtable[make_pair(_production.left, expression[0])].left = _production.left;
-                parsingtable[make_pair(_production.left, expression[0])].right.push_back(expression);
-            }
+        for (const auto& expression : _production.second) {
+            if (expression[0] != '#' && grammar->terminal.find(expression[0]) != grammar->terminal.end()) 
+                parsingtable[make_pair(_production.first, expression[0])].push_back(expression);
+            
             else {
-                for (auto ch : grammar->first[expression[0]]) {
-                    if (ch != '#') {
-                        parsingtable[make_pair(_production.left, ch)].left = _production.left;
-                        parsingtable[make_pair(_production.left, ch)].right.push_back(expression);
-                    }
-                }
+                for (auto ch : grammar->first[expression[0]]) 
+                    if (ch != '#') 
+                        parsingtable[make_pair(_production.first, ch)].push_back(expression);
             }
             if (expression[0] == '#' || (grammar->nonterminal.find(expression[0]) != grammar->nonterminal.end()
                 && grammar->first[expression[0]].find('#') != grammar->first[expression[0]].end())) {
-                for (auto ch : grammar->follow[_production.left]) {
-                    parsingtable[make_pair(_production.left, ch)].left = _production.left;
-                    parsingtable[make_pair(_production.left, ch)].right.push_back(expression);
+                for (auto ch : grammar->follow[_production.first]) {
+                    parsingtable[make_pair(_production.first, ch)].push_back(expression);
                 }
             }
         }
@@ -44,6 +39,6 @@ void LL1ParsingTable::constructTable() {
 void::LL1ParsingTable::checkTable() {
     for (const auto i : grammar->nonterminal)
         for (const auto j : grammar->terminal)
-            if (j != '#' && parsingtable[make_pair(i, j)].right.size() > 1)
+            if (j != '#' && parsingtable[make_pair(i, j)].size() > 1)
                 throw "wrong table!";
 }

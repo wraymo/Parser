@@ -8,8 +8,7 @@ public:
     LL1ParsingTable(Grammar*);
 private:
     Grammar* grammar;
-    map<pair<char, char>, Production> parsingtable;
-
+    map<pair<char, char>, vector<string> > parsingtable;
     void constructTable();
     void checkTable();
 };

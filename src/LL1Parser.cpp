@@ -35,14 +35,14 @@ void LL1Parser::parse(string expression) {
                 return;
             }
         }
-        else if (table.parsingtable[make_pair(S.top(), second)].left != -1) {
+        else if (table.parsingtable[make_pair(S.top(), second)].size() > 1) {
             char top = S.top();
             S.pop();
-            for (int i = table.parsingtable[make_pair(top, second)].right[0].size() - 1; i >= 0; i--)
-                if(table.parsingtable[make_pair(top, second)].right[0][i] != '#')
-                    S.push(table.parsingtable[make_pair(top, second)].right[0][i]);
+            for (int i = table.parsingtable[make_pair(top, second)][0].size() - 1; i >= 0; i--)
+                if(table.parsingtable[make_pair(top, second)][0][i] != '#')
+                    S.push(table.parsingtable[make_pair(top, second)][0][i]);
             if (debug)
-                cout << table.parsingtable[make_pair(top, second)].left << "->" << table.parsingtable[make_pair(top, second)].right[0] << endl;
+                cout << top << "->" << table.parsingtable[make_pair(top, second)][0] << endl;
         }
         else {
             cerr << "Wrong expression(type: 2)!" << endl;
